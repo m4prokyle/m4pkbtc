@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const BitcoinWalletApp());
+  runApp(const M4PKBTCApp());
 }
 
 // The main application widget.
-class BitcoinWalletApp extends StatelessWidget {
-  const BitcoinWalletApp({super.key});
+class M4PKBTCApp extends StatelessWidget {
+  const M4PKBTCApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'M4PKBTC Wallet',
+      title: 'M4PKBTC',
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF0C0C0C),
@@ -153,21 +153,25 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
       _isLoading = true;
     });
 
-    // Placeholder for creating a new wallet.
     // In a real application, you would generate a new seed phrase and keys here.
+    // This is a placeholder for a 12-word seed phrase.
+    const List<String> seedPhrase = [
+      'dull', 'dusk', 'drama', 'dawn', 'day', 'dream',
+      'device', 'drive', 'dust', 'dumb', 'double', 'dragon'
+    ];
+
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Placeholder: New wallet created!'),
-          backgroundColor: Colors.green,
-        ),
-      );
       setState(() {
         _isLoading = false;
       });
-      // Here you would navigate to a screen to show the seed phrase.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SeedPhrasePage(seedPhrase: seedPhrase),
+        ),
+      );
     }
   }
 
@@ -227,6 +231,113 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                   'Start Generation',
                   style: TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// A new page to display the generated seed phrase.
+class SeedPhrasePage extends StatelessWidget {
+  final List<String> seedPhrase;
+
+  const SeedPhrasePage({super.key, required this.seedPhrase});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFFACC15)),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Your Secret Recovery Phrase',
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFACC15)),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Write down or store this phrase in a safe place. Do not share it with anyone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1F2937),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3.5,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: seedPhrase.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF374151),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${index + 1}. ${seedPhrase[index]}',
+                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Here you would navigate to a verification page or the main dashboard.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Seed phrase saved!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFACC15),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    'I Have Saved My Phrase',
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
